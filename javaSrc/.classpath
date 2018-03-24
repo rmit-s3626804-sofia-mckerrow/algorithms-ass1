@@ -2,5 +2,7 @@
 <classpath>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="src" path=""/>
+	<classpathentry kind="lib" path="C:/Users/Sofia/git/algorithms-ass1/javaSrc/jopt-simple-5.0.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Sofia/git/algorithms-ass1/javaSrc/sample.jar"/>
 	<classpathentry kind="output" path=""/>
 </classpath>

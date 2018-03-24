@@ -12,21 +12,28 @@ import java.util.*;
 public class AdjMatrix <T extends Object> implements FriendshipGraph<T>
 {
 
+	private ArrayList<ArrayList<T>> adjMatrix;
+	
 	/**
 	 * Contructs empty graph.
 	 */
     public AdjMatrix() {
-    	// Implement me!
+    	adjMatrix = new ArrayList<ArrayList<T>>();
     } // end of AdjMatrix()
     
     
     public void addVertex(T vertLabel) {
-        // Implement me!
+        ArrayList<T> vertex = new ArrayList<T>();
+        vertex.add(vertLabel);
+        adjMatrix.add(vertex);
     } // end of addVertex()
 	
     
     public void addEdge(T srcLabel, T tarLabel) {
-        // Implement me!
+        ArrayList<T> edgeList = new ArrayList<T>();
+        edgeList.add(srcLabel);
+        edgeList.add(tarLabel);
+        adjMatrix.add(edgeList);
     } // end of addEdge()
 	
 
