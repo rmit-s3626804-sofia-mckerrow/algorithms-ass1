@@ -31,9 +31,13 @@ public class AdjMatrix <T extends Object> implements FriendshipGraph<T>
     
     public void addEdge(T srcLabel, T tarLabel) {
         ArrayList<T> edgeList = new ArrayList<T>();
+        // T edge = 1; // 1 to show there is an edge between srcLabel and tarLabel
+        
         edgeList.add(srcLabel);
         edgeList.add(tarLabel);
+        //   edgeList.add(edge);
         adjMatrix.add(edgeList);
+        
     } // end of addEdge()
 	
 
@@ -56,8 +60,12 @@ public class AdjMatrix <T extends Object> implements FriendshipGraph<T>
     } // end of removeEdges()
 	
     
-    public void printVertices(PrintWriter os) {
-        // Implement me!
+    public void printVertices(PrintWriter os) {  	
+        for (int i = 0; i < adjMatrix.size(); i++) {
+        	os.print(adjMatrix.get(i) + " ");
+        }
+        
+        os.flush();
     } // end of printVertices()
 	
     
