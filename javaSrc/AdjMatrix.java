@@ -12,31 +12,47 @@ import java.util.*;
 public class AdjMatrix <T extends Object> implements FriendshipGraph<T>
 {
 
-	private ArrayList<ArrayList<T>> adjMatrix;
+	private int maxVert; // maximum number of vertices
+	private int numVert; // number of vertices
+	private String[] vertexList;
+	private int[][] adjMatrix;
 	
 	/**
 	 * Contructs empty graph.
 	 */
     public AdjMatrix() {
-    	adjMatrix = new ArrayList<ArrayList<T>>();
+    	maxVert = 4000;
+    	numVert = 0;
+    	vertexList = new String[maxVert];
+    	adjMatrix = new int[maxVert][maxVert];
+    	
+    	// Initialise all entries in adjacency matrix to zero
+    	for (int i = 0; i < maxVert; i++) {
+    		for (int j = 0; j < maxVert; j++) {
+    			adjMatrix[i][j]= 0; 
+    		}
+    	}
     } // end of AdjMatrix()
     
     
     public void addVertex(T vertLabel) {
-        ArrayList<T> vertex = new ArrayList<T>();
-        vertex.add(vertLabel);
-        adjMatrix.add(vertex);
+        // Check if vertexList is full
+    	if (numVert < maxVert) {
+    		// Check if vertex is already in list
+        	for (int i = 0; i < vertexList.length; i++ ) {
+        		if (vertexList[i] == vertLabel)
+        			System.err.println("Vertex has already been added");
+        		else {
+        			vertexList[i] = (String) vertLabel;
+        			return;
+        		}   			
+        	}
+        }
     } // end of addVertex()
 	
     
     public void addEdge(T srcLabel, T tarLabel) {
-        ArrayList<T> edgeList = new ArrayList<T>();
-        // T edge = 1; // 1 to show there is an edge between srcLabel and tarLabel
         
-        edgeList.add(srcLabel);
-        edgeList.add(tarLabel);
-        //   edgeList.add(edge);
-        adjMatrix.add(edgeList);
         
     } // end of addEdge()
 	
@@ -60,10 +76,12 @@ public class AdjMatrix <T extends Object> implements FriendshipGraph<T>
     } // end of removeEdges()
 	
     
-    public void printVertices(PrintWriter os) {  	
-        for (int i = 0; i < adjMatrix.size(); i++) {
-        	os.print(adjMatrix.get(i) + " ");
-        }
+    public void printVertices(PrintWriter os) {
+    	os.println(vertexList[0]);
+    	
+        /*for (int i = 0; i < adjMatrix.length; i++) {
+        	os.print(adjMatrix[i] + " ");
+        }*/
         
         os.flush();
     } // end of printVertices()
