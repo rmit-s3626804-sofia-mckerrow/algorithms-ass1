@@ -37,13 +37,13 @@ public class AdjMatrix<T extends Object> implements FriendshipGraph<T> {
 		// Check if vertexList is full
 		if (numVert < maxVert) {
 			// Check if vertex is already in list
-			for (int i = 0; i < adjMatrix.length; i++) {
+			for (int i = 0; i < vertexList.length; i++) {
 				if (vertexList[i].equals((String) vertLabel)) {
 					System.err.println("Vertex has already been added");
 					break;
 				}
 				// If index i already has a vertex move onto next iteration of for loop
-				 else if (vertexList[i] != null)
+				else if (vertexList[i] != null)
 					return;
 				// If index i is empty add vertex
 				else {
@@ -51,8 +51,7 @@ public class AdjMatrix<T extends Object> implements FriendshipGraph<T> {
 					numVert++;
 					break;
 				}
-			}			
-			
+			}				
 		}
 	} // end of addVertex()
 
@@ -77,14 +76,8 @@ public class AdjMatrix<T extends Object> implements FriendshipGraph<T> {
 	} // end of removeEdges()
 
 	public void printVertices(PrintWriter os) {
-		// os = new PrintWriter(System.out);
-		
-		/*for (int i = 0; i < vertexList.length; i++) {
-			os.print(vertexList[i] + " ");
-		}*/
-
-		os.flush();
-	} // end of printVertices()
+		// Implement me!
+	} // end of printEdges()
 
 	public void printEdges(PrintWriter os) {
 		// Implement me!
