@@ -81,9 +81,11 @@ public class AdjMatrix<T extends Object> implements FriendshipGraph<T> {
 		
 		for (int i = 0; i < vertexList.length; i++) {
 			if (vertexList[i] != null ) {
-				os.println(vertexList[i]+ " ");
+				os.print(vertexList[i]+ " ");
 			}
 		}
+		
+		os.flush();
 	} // end of printEdges()
 
 	public void printEdges(PrintWriter os) {
