@@ -89,29 +89,30 @@ public class AdjMatrix<T extends Object> implements FriendshipGraph<T> {
 		if (!vertexFound)
 			System.err.println("Vertex " + tarLabel + " has not been added");
 
-		// Check if vertexList contains both srcLabel and tarLabel
+		// check if vertexList contains both srcLabel and tarLabel
 		if (Arrays.asList(vertexList).contains(srcLabel) && Arrays.asList(vertexList).contains(tarLabel)) {
-			// Add edge to edgeList
-			for (int i = 0; i < edgeList.length; i++) {
-				if (edgeList[i] != null)
-					continue;
-				else {
-					edgeList[i] = (String) srcLabel + " " + (String) tarLabel;
-					break;
+			// check if edge has been added to edgeList
+			if (!(Arrays.asList(edgeList).contains((String) srcLabel + " " + (String) tarLabel))) {
+				// If edge hasn't already been added then add edge to edgeList
+				for (int i = 0; i < edgeList.length; i++) {
+					if (edgeList[i] != null)
+						continue;
+					else {
+						edgeList[i] = (String) srcLabel + " " + (String) tarLabel;
+						break;
+					}
 				}
-			}
 
-			// Add edge to adjMatrix
-			adjMatrix[rowIndex][colIndex] = 1;
-			adjMatrix[colIndex][rowIndex] = 1;
+				// Add edge to adjMatrix
+				adjMatrix[rowIndex][colIndex] = 1;
+				adjMatrix[colIndex][rowIndex] = 1;
+			}
 		}
 
 	} // end of addEdge()
 
 	public ArrayList<T> neighbours(T vertLabel) {
 		ArrayList<T> neighbours = new ArrayList<T>();
-
-		// Implement me!
 
 		return neighbours;
 	} // end of neighbours()
