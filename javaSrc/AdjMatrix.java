@@ -111,8 +111,33 @@ public class AdjMatrix<T extends Object> implements FriendshipGraph<T> {
 
 	} // end of addEdge()
 
+	@SuppressWarnings("unchecked")
 	public ArrayList<T> neighbours(T vertLabel) {
 		ArrayList<T> neighbours = new ArrayList<T>();
+		T neighbour;
+		boolean vertexFound = false;
+
+		// check if vertex has been added
+		for (int i = 0; i < vertexList.length; i++) {
+			if (Arrays.asList(vertexList).contains(vertLabel)) {
+				rowIndex = Arrays.asList(vertexList).indexOf(vertLabel);
+				vertexFound = true;
+				break;
+			}
+		}
+
+		if (vertexFound) {
+			// check which vertices in adjMatrix have been added as an edge for vertLabel
+			for (int j = 0; j < adjMatrix.length; j++) {
+				if (adjMatrix[rowIndex][j] == 1) {
+					colIndex = j;
+					neighbour = (T) vertexList[colIndex];
+					neighbours.add(neighbour);
+				}
+			}
+		}
+		else
+			System.err.println("Vertex " + vertLabel + " has not been added");
 
 		return neighbours;
 	} // end of neighbours()
