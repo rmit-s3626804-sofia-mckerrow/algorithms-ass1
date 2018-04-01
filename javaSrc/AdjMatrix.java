@@ -43,12 +43,14 @@ public class AdjMatrix<T extends Object> implements FriendshipGraph<T> {
 	} // end of AdjMatrix()
 
 	public void addVertex(T vertLabel) {
+		vertexFound = checkIfVertexAdded(vertLabel);
+
 		// Check if vertexList is full
 		if (numVert < maxVert) {
 			// Check if vertex is already in list
 			for (int i = 0; i < vertexList.length; i++) {
 				// check if vertLabel has already been added
-				if (Arrays.asList(vertexList).contains(vertLabel)) {
+				if (vertexFound) {
 					System.err.println("Vertex " + vertLabel + " has already been added");
 					break;
 				}
@@ -67,34 +69,28 @@ public class AdjMatrix<T extends Object> implements FriendshipGraph<T> {
 
 	public void addEdge(T srcLabel, T tarLabel) {
 		// check if vertex srcLabel has already been added
-		for (int i = 0; i < vertexList.length; i++) {
-			if (Arrays.asList(vertexList).contains(srcLabel)) {
-				rowIndex = Arrays.asList(vertexList).indexOf(srcLabel);
-				vertexFound = true;
-				break;
-			}
-		}
-		if (!vertexFound)
+		vertexFound = checkIfVertexAdded(srcLabel);
+		
+		if (vertexFound)
+			rowIndex = Arrays.asList(vertexList).indexOf(srcLabel);
+		else
 			System.err.println("Vertex " + srcLabel + " has not been added");
 
 		// reset vertexFound to false before next check
 		vertexFound = false;
 
 		// check if vertex tarLabel has already been added
-		for (int i = 0; i < vertexList.length; i++) {
-			if (Arrays.asList(vertexList).contains(tarLabel)) {
-				colIndex = Arrays.asList(vertexList).indexOf(tarLabel);
-				vertexFound = true;
-				break;
-			}
-		}
-		if (!vertexFound)
+		vertexFound = checkIfVertexAdded(tarLabel);
+		if (vertexFound)
+			colIndex = Arrays.asList(vertexList).indexOf(tarLabel);
+		else
 			System.err.println("Vertex " + tarLabel + " has not been added");
 
 		// check if vertexList contains both srcLabel and tarLabel
-		if (Arrays.asList(vertexList).contains(srcLabel) && Arrays.asList(vertexList).contains(tarLabel)) {
+		if (checkIfVertexAdded(srcLabel) && checkIfVertexAdded(tarLabel)) {
 			// check if edge has been added to edgeList
-			if (!(Arrays.asList(edgeList).contains((String) srcLabel + " " + (String) tarLabel))) {
+			edgeFound = checkIfEdgeAdded(srcLabel, tarLabel);
+			if (!edgeFound) {
 				// If edge hasn't already been added then add edge to edgeList
 				for (int i = 0; i < edgeList.length; i++) {
 					if (edgeList[i] != null)
@@ -119,15 +115,10 @@ public class AdjMatrix<T extends Object> implements FriendshipGraph<T> {
 		T neighbour;
 
 		// check if vertex has been added
-		for (int i = 0; i < vertexList.length; i++) {
-			if (Arrays.asList(vertexList).contains(vertLabel)) {
-				rowIndex = Arrays.asList(vertexList).indexOf(vertLabel);
-				vertexFound = true;
-				break;
-			}
-		}
-
+		vertexFound = checkIfVertexAdded(vertLabel);
+		
 		if (vertexFound) {
+			rowIndex = Arrays.asList(vertexList).indexOf(vertLabel);
 			// check which vertices in adjMatrix have been added as an edge for vertLabel
 			for (int j = 0; j < adjMatrix.length; j++) {
 				if (adjMatrix[rowIndex][j] == 1) {
@@ -136,29 +127,30 @@ public class AdjMatrix<T extends Object> implements FriendshipGraph<T> {
 					neighbours.add(neighbour);
 				}
 			}
-		} else
+		}
+		else
 			System.err.println("Vertex " + vertLabel + " has not been added");
-
+			
 		return neighbours;
 	} // end of neighbours()
 
 	public void removeVertex(T vertLabel) {
 		// check if vertLabel has already been added
-		for (int i = 0; i < vertexList.length; i++) {
-			if (Arrays.asList(vertexList).contains(vertLabel)) {
-				// remove vertex from vertexList
-				rowIndex = Arrays.asList(vertexList).indexOf(vertLabel);
-				vertexList[rowIndex] = null;
-				vertexFound = true;
-				numVert--;
-				break;
+		vertexFound = checkIfVertexAdded(vertLabel);
+		
+		if (vertexFound) {
+			rowIndex = Arrays.asList(vertexList).indexOf(vertLabel);
+			vertexList[rowIndex] = null;
+			numVert--;
+			
+			for (int i = 0; i < adjMatrix.length; i++) {
+				adjMatrix[rowIndex][i] = 0;
+				adjMatrix[i][rowIndex] = 0;
 			}
 		}
-
-		// if vertLabel is not in vertexList print error message
-		if (!vertexFound)
+		else
 			System.err.println("Vertex " + vertLabel + " has not been added");
-
+		
 		// check if edge has already been added
 		for (int i = 0; i < edgeList.length; i++) {
 			String test = edgeList[i];
@@ -169,66 +161,41 @@ public class AdjMatrix<T extends Object> implements FriendshipGraph<T> {
 			}
 		}
 
-		// check if vertLabel has already been added
-		for (int i = 0; i < vertexList.length; i++) {
-			if (Arrays.asList(vertexList).contains(vertLabel)) {
-				// remove edge from adjMatrix
-				rowIndex = Arrays.asList(vertexList).indexOf(vertLabel);
-				for (int j = 0; j < adjMatrix.length; j++) {
-					adjMatrix[rowIndex][j] = 0;
-					adjMatrix[j][rowIndex] = 0;
-				}
-			}
-		}
-
 	} // end of removeVertex()
 
 	public void removeEdge(T srcLabel, T tarLabel) {
-		// check if edge has already been added
-		for (int i = 0; i < edgeList.length; i++) {
-			if (Arrays.asList(edgeList).contains((String) srcLabel + " " + (String) tarLabel)) {
-				// remove edge from edgeList
-				rowIndex = Arrays.asList(edgeList).indexOf((String) srcLabel + " " + (String) tarLabel);
-				edgeList[rowIndex] = null;
-
-				// remove edge from adjMatrix
-				rowIndex = Arrays.asList(vertexList).indexOf(srcLabel);
-				colIndex = Arrays.asList(vertexList).indexOf(tarLabel);
-				adjMatrix[rowIndex][colIndex] = 0;
-				adjMatrix[colIndex][rowIndex] = 0;
-
-				edgeFound = true;
-				break;
-			}
-		}
-
-		if (!edgeFound)
-			System.err.println("Edge " + srcLabel + " " + tarLabel + " has not been added");
-
 		// check if vertex srcLabel is in vertexList
-		for (int i = 0; i < vertexList.length; i++) {
-			if (Arrays.asList(vertexList).contains(srcLabel)) {
-				vertexFound = true;
-				break;
-			}
-		}
-
+		vertexFound = checkIfVertexAdded(srcLabel);
+		
 		if (!vertexFound)
 			System.err.println("Vertex " + srcLabel + " has not been added");
 
 		// reset vertexFound to false before next check
 		vertexFound = false;
-
+		
 		// check if vertex tarLabel has already been added
-		for (int i = 0; i < vertexList.length; i++) {
-			if (Arrays.asList(vertexList).contains(tarLabel)) {
-				vertexFound = true;
-				break;
-			}
-		}
+		vertexFound = checkIfVertexAdded(tarLabel);
+		
 		if (!vertexFound)
 			System.err.println("Vertex " + tarLabel + " has not been added");
+		
+		// check if edge has already been added
+		edgeFound = checkIfEdgeAdded(srcLabel, tarLabel);
+		
+		if (edgeFound) {
+			// remove edge from edgeList
+			rowIndex = Arrays.asList(edgeList).indexOf((String) srcLabel + " " + (String) tarLabel);
+			edgeList[rowIndex] = null;
 
+			// remove edge from adjMatrix
+			rowIndex = Arrays.asList(vertexList).indexOf(srcLabel);
+			colIndex = Arrays.asList(vertexList).indexOf(tarLabel);
+			adjMatrix[rowIndex][colIndex] = 0;
+			adjMatrix[colIndex][rowIndex] = 0;
+		}
+		else
+			System.err.println("Edge " + srcLabel + " " + tarLabel + " has not been added");
+		
 	} // end of removeEdges()
 
 	public void printVertices(PrintWriter os) {
@@ -256,8 +223,8 @@ public class AdjMatrix<T extends Object> implements FriendshipGraph<T> {
 	} // end of printEdges()
 
 	public int shortestPathDistance(T vertLabel1, T vertLabel2) {
-		int connectedDist = 0;
-		
+		int connectedDist = -1;
+
 		// check if vertex vertLabel1 has already been added
 		for (int i = 0; i < vertexList.length; i++) {
 			if (Arrays.asList(vertexList).contains(vertLabel1)) {
@@ -280,13 +247,15 @@ public class AdjMatrix<T extends Object> implements FriendshipGraph<T> {
 				break;
 			}
 		}
+
 		if (!vertexFound)
 			System.err.println("Vertex " + vertLabel2 + " has not been added");
 
 		// Check if both vertices vertLabel1 and vertLabel 2 have been added
 		if (Arrays.asList(vertexList).contains(vertLabel1) && Arrays.asList(vertexList).contains(vertLabel2)) {
 			// Search for shortest path using Djikstra's Algorithm
-			// Based on code from https://www.geeksforgeeks.org/greedy-algorithms-set-6-dijkstras-shortest-path-algorithm/
+			// Based on code from
+			// https://www.geeksforgeeks.org/greedy-algorithms-set-6-dijkstras-shortest-path-algorithm/
 			int distances[] = new int[maxVert];
 			// shortestPathTreeSet[i] will be true if vertex i is included in shortest path
 			// tree or shortest distance from
@@ -312,32 +281,51 @@ public class AdjMatrix<T extends Object> implements FriendshipGraph<T> {
 
 				// Update distance value of the adjacent vertices of the picked vertex
 				for (int v = 0; v < maxVert; v++) {
-					// Update distances[v] only if it is not in shortestPathSet, there is an edge from u to v, and 
-					//total weight path from vertLabel1 to v through u is smaller than current value of distances[v]
+					// Update distances[v] only if it is not in shortestPathSet, there is an edge
+					// from u to v, and
+					// total weight path from vertLabel1 to v through u is smaller than current
+					// value of distances[v]
 					if (!shortestPathTreeSet[v] && adjMatrix[u][v] != 0 && distances[u] != Integer.MAX_VALUE
 							&& distances[u] + adjMatrix[u][v] < distances[v]) {
 						distances[v] = distances[u] + adjMatrix[u][v];
 					}
 				}
 			}
-			
+
 			connectedDist = distances[colIndex];
 		}
-		else
-			connectedDist = -1;
-		
+
 		// If there is a connection between source and target, return connectedDist
 		if (connectedDist != Integer.MAX_VALUE)
 			return connectedDist;
 		// If we reach this point, source and target are disconnected
 		else
 			return disconnectedDist;
-		
+
 	} // end of shortestPathDistance()
+
+	// Check if a vertex has been added
+	public boolean checkIfVertexAdded(T vertex) {
+		if (Arrays.asList(vertexList).contains(vertex))
+			vertexFound = true;
+		else
+			vertexFound = false;
+
+		return vertexFound;
+	}
+	
+	public boolean checkIfEdgeAdded(T vertex1, T vertex2) {
+		if (Arrays.asList(edgeList).contains((String) vertex1 + " " + (String) vertex2)) 
+			edgeFound = true;
+		else
+			edgeFound = false;
+		
+		return edgeFound;
+	}
 
 	// Find the vertex with minimum distance value from the set of vertices not yet
 	// included in shortest path tree
-	int minDistance(int distances[], Boolean shortestPathTreeSet[]) {
+	public int minDistance(int distances[], Boolean shortestPathTreeSet[]) {
 		// Initialize min value
 		int min = Integer.MAX_VALUE, min_index = -1;
 
