@@ -225,37 +225,29 @@ public class AdjMatrix<T extends Object> implements FriendshipGraph<T> {
 	public int shortestPathDistance(T vertLabel1, T vertLabel2) {
 		int connectedDist = -1;
 
-		// check if vertex vertLabel1 has already been added
-		for (int i = 0; i < vertexList.length; i++) {
-			if (Arrays.asList(vertexList).contains(vertLabel1)) {
-				rowIndex = Arrays.asList(vertexList).indexOf(vertLabel1);
-				vertexFound = true;
-				break;
-			}
-		}
-		if (!vertexFound)
+		// Check if vertex vertLabel1 has already been added
+		vertexFound = checkIfVertexAdded(vertLabel1);
+		
+		if (vertexFound)
+			rowIndex = Arrays.asList(vertexList).indexOf(vertLabel1);
+		else
 			System.err.println("Vertex " + vertLabel1 + " has not been added");
-
-		// reset vertexFound to false before next check
+		
+		// Reset vertexFound to false before next check
 		vertexFound = false;
 
-		// check if vertex vertLabel2 has already been added
-		for (int i = 0; i < vertexList.length; i++) {
-			if (Arrays.asList(vertexList).contains(vertLabel2)) {
-				colIndex = Arrays.asList(vertexList).indexOf(vertLabel2);
-				vertexFound = true;
-				break;
-			}
-		}
-
-		if (!vertexFound)
+		// Check if vertex vertLabel2 has already been added
+		vertexFound = checkIfVertexAdded(vertLabel2);
+		
+		if (vertexFound)
+			colIndex = Arrays.asList(vertexList).indexOf(vertLabel2);
+		else
 			System.err.println("Vertex " + vertLabel2 + " has not been added");
-
+		
 		// Check if both vertices vertLabel1 and vertLabel 2 have been added
 		if (Arrays.asList(vertexList).contains(vertLabel1) && Arrays.asList(vertexList).contains(vertLabel2)) {
 			// Search for shortest path using Djikstra's Algorithm
-			// Based on code from
-			// https://www.geeksforgeeks.org/greedy-algorithms-set-6-dijkstras-shortest-path-algorithm/
+			// Based on code from https://www.geeksforgeeks.org/greedy-algorithms-set-6-dijkstras-shortest-path-algorithm/
 			int distances[] = new int[maxVert];
 			// shortestPathTreeSet[i] will be true if vertex i is included in shortest path
 			// tree or shortest distance from
@@ -281,10 +273,8 @@ public class AdjMatrix<T extends Object> implements FriendshipGraph<T> {
 
 				// Update distance value of the adjacent vertices of the picked vertex
 				for (int v = 0; v < maxVert; v++) {
-					// Update distances[v] only if it is not in shortestPathSet, there is an edge
-					// from u to v, and
-					// total weight path from vertLabel1 to v through u is smaller than current
-					// value of distances[v]
+					// Update distances[v] only if it is not in shortestPathSet, there is an edge from u to v, and
+					// total weight path from vertLabel1 to v through u is smaller than current value of distances[v]
 					if (!shortestPathTreeSet[v] && adjMatrix[u][v] != 0 && distances[u] != Integer.MAX_VALUE
 							&& distances[u] + adjMatrix[u][v] < distances[v]) {
 						distances[v] = distances[u] + adjMatrix[u][v];
@@ -323,8 +313,7 @@ public class AdjMatrix<T extends Object> implements FriendshipGraph<T> {
 		return edgeFound;
 	}
 
-	// Find the vertex with minimum distance value from the set of vertices not yet
-	// included in shortest path tree
+	// Find the vertex with minimum distance value from the set of vertices not yet included in shortest path tree
 	public int minDistance(int distances[], Boolean shortestPathTreeSet[]) {
 		// Initialize min value
 		int min = Integer.MAX_VALUE, min_index = -1;
