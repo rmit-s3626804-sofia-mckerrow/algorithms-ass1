@@ -18,6 +18,8 @@ public class AdjMatrix<T extends Object> implements FriendshipGraph<T> {
 	private int[][] adjMatrix;
 	private int rowIndex; // index number for row in adjMatrix[][]
 	private int colIndex; // index number for column in adjMatrix[][]
+	private boolean vertexFound;
+	private boolean edgeFound;
 
 	/**
 	 * Contructs empty graph.
@@ -28,6 +30,8 @@ public class AdjMatrix<T extends Object> implements FriendshipGraph<T> {
 		vertexList = new String[maxVert];
 		edgeList = new String[maxVert];
 		adjMatrix = new int[maxVert][maxVert];
+		vertexFound = false;
+		edgeFound = false;
 
 		// Initialise all entries in adjacency matrix to zero
 		for (int i = 0; i < maxVert; i++) {
@@ -62,8 +66,6 @@ public class AdjMatrix<T extends Object> implements FriendshipGraph<T> {
 	} // end of addVertex()
 
 	public void addEdge(T srcLabel, T tarLabel) {
-		boolean vertexFound = false;
-
 		// check if vertex srcLabel has already been added
 		for (int i = 0; i < vertexList.length; i++) {
 			if (Arrays.asList(vertexList).contains(srcLabel)) {
@@ -115,7 +117,6 @@ public class AdjMatrix<T extends Object> implements FriendshipGraph<T> {
 	public ArrayList<T> neighbours(T vertLabel) {
 		ArrayList<T> neighbours = new ArrayList<T>();
 		T neighbour;
-		boolean vertexFound = false;
 
 		// check if vertex has been added
 		for (int i = 0; i < vertexList.length; i++) {
@@ -135,16 +136,13 @@ public class AdjMatrix<T extends Object> implements FriendshipGraph<T> {
 					neighbours.add(neighbour);
 				}
 			}
-		}
-		else
+		} else
 			System.err.println("Vertex " + vertLabel + " has not been added");
 
 		return neighbours;
 	} // end of neighbours()
 
 	public void removeVertex(T vertLabel) {
-		boolean vertexFound = false;
-
 		// check if vertLabel has already been added
 		for (int i = 0; i < vertexList.length; i++) {
 			if (Arrays.asList(vertexList).contains(vertLabel)) {
@@ -152,6 +150,7 @@ public class AdjMatrix<T extends Object> implements FriendshipGraph<T> {
 				rowIndex = Arrays.asList(vertexList).indexOf(vertLabel);
 				vertexList[rowIndex] = null;
 				vertexFound = true;
+				numVert--;
 				break;
 			}
 		}
@@ -185,9 +184,6 @@ public class AdjMatrix<T extends Object> implements FriendshipGraph<T> {
 	} // end of removeVertex()
 
 	public void removeEdge(T srcLabel, T tarLabel) {
-		boolean vertexFound = false;
-		boolean edgeFound = false;
-
 		// check if edge has already been added
 		for (int i = 0; i < edgeList.length; i++) {
 			if (Arrays.asList(edgeList).contains((String) srcLabel + " " + (String) tarLabel)) {
@@ -260,10 +256,98 @@ public class AdjMatrix<T extends Object> implements FriendshipGraph<T> {
 	} // end of printEdges()
 
 	public int shortestPathDistance(T vertLabel1, T vertLabel2) {
-		// Implement me!
+		int connectedDist = 0;
+		
+		// check if vertex vertLabel1 has already been added
+		for (int i = 0; i < vertexList.length; i++) {
+			if (Arrays.asList(vertexList).contains(vertLabel1)) {
+				rowIndex = Arrays.asList(vertexList).indexOf(vertLabel1);
+				vertexFound = true;
+				break;
+			}
+		}
+		if (!vertexFound)
+			System.err.println("Vertex " + vertLabel1 + " has not been added");
 
-		// if we reach this point, source and target are disconnected
-		return disconnectedDist;
+		// reset vertexFound to false before next check
+		vertexFound = false;
+
+		// check if vertex vertLabel2 has already been added
+		for (int i = 0; i < vertexList.length; i++) {
+			if (Arrays.asList(vertexList).contains(vertLabel2)) {
+				colIndex = Arrays.asList(vertexList).indexOf(vertLabel2);
+				vertexFound = true;
+				break;
+			}
+		}
+		if (!vertexFound)
+			System.err.println("Vertex " + vertLabel2 + " has not been added");
+
+		// Check if both vertices vertLabel1 and vertLabel 2 have been added
+		if (Arrays.asList(vertexList).contains(vertLabel1) && Arrays.asList(vertexList).contains(vertLabel2)) {
+			// Search for shortest path using Djikstra's Algorithm
+			// Based on code from https://www.geeksforgeeks.org/greedy-algorithms-set-6-dijkstras-shortest-path-algorithm/
+			int distances[] = new int[maxVert];
+			// shortestPathTreeSet[i] will be true if vertex i is included in shortest path
+			// tree or shortest distance from
+			// vertLabel1 to vertLabel2 is finalised
+			Boolean shortestPathTreeSet[] = new Boolean[maxVert];
+
+			// Initialise all distances as infinite and shortestPathTreeSet[] as false
+			for (int i = 0; i < maxVert; i++) {
+				distances[i] = Integer.MAX_VALUE;
+				shortestPathTreeSet[i] = false;
+			}
+
+			// Distance of vertLabel1 (source vertex) from itself is always 0
+			distances[rowIndex] = 0;
+
+			// Find shortest path between vertLabel1 and vertLabel2
+			for (int count = 0; count < maxVert - 1; count++) {
+				// Pick the minimum distance vertex from the set of vertices not yet processed
+				int u = minDistance(distances, shortestPathTreeSet);
+
+				// Mark the picked vertex as processed
+				shortestPathTreeSet[u] = true;
+
+				// Update distance value of the adjacent vertices of the picked vertex
+				for (int v = 0; v < maxVert; v++) {
+					// Update distances[v] only if it is not in shortestPathSet, there is an edge from u to v, and 
+					//total weight path from vertLabel1 to v through u is smaller than current value of distances[v]
+					if (!shortestPathTreeSet[v] && adjMatrix[u][v] != 0 && distances[u] != Integer.MAX_VALUE
+							&& distances[u] + adjMatrix[u][v] < distances[v]) {
+						distances[v] = distances[u] + adjMatrix[u][v];
+					}
+				}
+			}
+			
+			connectedDist = distances[colIndex];
+		}
+		else
+			connectedDist = -1;
+		
+		// If there is a connection between source and target, return connectedDist
+		if (connectedDist != Integer.MAX_VALUE)
+			return connectedDist;
+		// If we reach this point, source and target are disconnected
+		else
+			return disconnectedDist;
+		
 	} // end of shortestPathDistance()
+
+	// Find the vertex with minimum distance value from the set of vertices not yet
+	// included in shortest path tree
+	int minDistance(int distances[], Boolean shortestPathTreeSet[]) {
+		// Initialize min value
+		int min = Integer.MAX_VALUE, min_index = -1;
+
+		for (int v = 0; v < maxVert; v++)
+			if (shortestPathTreeSet[v] == false && distances[v] <= min) {
+				min = distances[v];
+				min_index = v;
+			}
+
+		return min_index;
+	}
 
 } // end of class AdjMatrix
