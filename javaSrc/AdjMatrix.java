@@ -210,6 +210,7 @@ public class AdjMatrix<T extends Object> implements FriendshipGraph<T> {
 				os.print(vertices[i] + " ");
 			}
 		}
+		os.println("");
 
 		os.flush();
 	} // end of printEdges()
