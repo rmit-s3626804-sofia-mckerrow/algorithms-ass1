@@ -120,9 +120,9 @@ public class AdjMatrix<T extends Object> implements FriendshipGraph<T> {
 		if (vertexFound) {
 			rowIndex = Arrays.asList(vertexList).indexOf(vertLabel);
 			// check which vertices in adjMatrix have been added as an edge for vertLabel
-			for (int j = 0; j < adjMatrix.length; j++) {
-				if (adjMatrix[rowIndex][j] == 1) {
-					colIndex = j;
+			for (int i = 0; i < adjMatrix.length; i++) {
+				if (adjMatrix[rowIndex][i] == 1) {
+					colIndex = i;
 					neighbour = (T) vertexList[colIndex];
 					neighbours.add(neighbour);
 				}
@@ -200,10 +200,14 @@ public class AdjMatrix<T extends Object> implements FriendshipGraph<T> {
 
 	public void printVertices(PrintWriter os) {
 		os = new PrintWriter(System.out, true);
+		
+		// Copy vertexList to a new array then sort the array vertices alphabetically
+		String[] vertices = vertexList.clone();
+		Arrays.sort(vertices, Comparator.nullsLast(Comparator.naturalOrder()));
 
-		for (int i = 0; i < vertexList.length; i++) {
-			if (vertexList[i] != null) {
-				os.print(vertexList[i] + " ");
+		for (int i = 0; i < vertices.length; i++) {
+			if (vertices[i] != null) {
+				os.print(vertices[i] + " ");
 			}
 		}
 
@@ -212,13 +216,26 @@ public class AdjMatrix<T extends Object> implements FriendshipGraph<T> {
 
 	public void printEdges(PrintWriter os) {
 		os = new PrintWriter(System.out, true);
-
-		for (int i = 0; i < edgeList.length; i++) {
-			if (edgeList[i] != null) {
-				os.println(edgeList[i]);
+		String edge1;
+		String edge2;
+		ArrayList<String> edges = new ArrayList<String>();
+		
+		for (int i = 0; i < adjMatrix.length; i++) {
+			for (int j = 0; j < adjMatrix.length; j++) {
+				if (adjMatrix[i][j] == 1) {
+					rowIndex = i;
+					edge1 = vertexList[rowIndex];
+					colIndex = j;
+					edge2 = vertexList[colIndex];
+					edges.add(edge1 + " " + edge2);
+				}
 			}
 		}
-
+			
+		for (int i = 0; i < edges.size(); i++) {
+			os.println(edges.get(i));
+		}
+		
 		os.flush();
 	} // end of printEdges()
 
