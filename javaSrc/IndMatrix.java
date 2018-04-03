@@ -86,7 +86,7 @@ public class IndMatrix<T extends Object> implements FriendshipGraph<T> {
 		if (vertexFound)
 			rowIndexTar = Arrays.asList(vertexList).indexOf(tarLabel);
 		else
-			System.err.println("Vertex " + srcLabel + " has not been added");
+			System.err.println("Vertex " + tarLabel + " has not been added");
 
 		// check if vertexList contains both srcLabel and tarLabel
 		if (checkIfVertexAdded(srcLabel) && checkIfVertexAdded(tarLabel)) {
@@ -111,10 +111,42 @@ public class IndMatrix<T extends Object> implements FriendshipGraph<T> {
 		}
 	} // end of addEdge()
 
+	@SuppressWarnings("unchecked")
 	public ArrayList<T> neighbours(T vertLabel) {
 		ArrayList<T> neighbours = new ArrayList<T>();
+		T neighbour;
+		String edge1;
+		String edge2;
+		String[] edgeListSplit;
 
-		// Implement me!
+		// check if vertex has been added
+		vertexFound = checkIfVertexAdded(vertLabel);
+
+		if (vertexFound) {
+			rowIndex = Arrays.asList(vertexList).indexOf(vertLabel);
+			// check which vertices in intMatrix have been added as an edge for vertLabel
+			for (int i = 0; i < indMatrix.length; i++) {
+				if (indMatrix[rowIndex][i] == 1) {
+					if (edgeList[i] != null) {
+						// Split the concatenated string in edgeList[i] into two separate strings, one for each vertex
+						edgeListSplit = edgeList[i].split("\\s");
+						edge1 = edgeListSplit[0];
+						edge2 = edgeListSplit[1];
+						
+						if (!edge1.equals(vertLabel)) {
+							neighbour = (T) edge1;
+							neighbours.add(neighbour);
+						}
+						
+						if (!edge2.equals(vertLabel)) {
+							neighbour = (T) edge2;
+							neighbours.add(neighbour);
+						}
+					}
+				}
+			}
+		} else
+			System.err.println("Vertex " + vertLabel + " has not been added");
 
 		return neighbours;
 	} // end of neighbours()
@@ -181,7 +213,7 @@ public class IndMatrix<T extends Object> implements FriendshipGraph<T> {
 			indMatrix[rowIndexTar][colIndex] = 0;
 		} else
 			System.err.println("Edge " + srcLabel + " " + tarLabel + " has not been added");
-		
+
 	} // end of removeEdges()
 
 	public void printVertices(PrintWriter os) {
@@ -207,16 +239,16 @@ public class IndMatrix<T extends Object> implements FriendshipGraph<T> {
 		String edge1;
 		String edge2;
 		ArrayList<String> edges = new ArrayList<String>();
-		
-		
+
 		for (int i = 0; i < edgeList.length; i++) {
 			if (edgeList[i] != null) {
+				// Split the concatenated string in edgeList[i] into two separate strings, one for each vertex
 				String[] edgeListSplit = edgeList[i].split("\\s");
 				edge1 = edgeListSplit[0];
 				edge2 = edgeListSplit[1];
 				edges.add(edge1 + " " + edge2);
 				edges.add(edge2 + " " + edge1);
-			}	
+			}
 		}
 
 		for (int i = 0; i < edges.size(); i++) {
