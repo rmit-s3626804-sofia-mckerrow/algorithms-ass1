@@ -92,11 +92,12 @@ public class AdjMatrix<T extends Object> implements FriendshipGraph<T> {
 			edgeFound = checkIfEdgeAdded(srcLabel, tarLabel);
 			if (!edgeFound) {
 				// If edge hasn't already been added then add edge to edgeList
-				for (int i = 0; i < edgeList.length; i++) {
+				for (int i = 0; i < edgeList.length; i = i + 2) {
 					if (edgeList[i] != null)
 						continue;
 					else {
 						edgeList[i] = (String) srcLabel + " " + (String) tarLabel;
+						edgeList[i + 1] = (String) tarLabel + " " + (String) srcLabel;
 						break;
 					}
 				}
@@ -186,6 +187,8 @@ public class AdjMatrix<T extends Object> implements FriendshipGraph<T> {
 			// remove edge from edgeList
 			rowIndex = Arrays.asList(edgeList).indexOf((String) srcLabel + " " + (String) tarLabel);
 			edgeList[rowIndex] = null;
+			rowIndex = Arrays.asList(edgeList).indexOf((String) tarLabel + " " + (String) srcLabel);
+			edgeList[rowIndex] = null;
 
 			// remove edge from adjMatrix
 			rowIndex = Arrays.asList(vertexList).indexOf(srcLabel);
@@ -217,25 +220,10 @@ public class AdjMatrix<T extends Object> implements FriendshipGraph<T> {
 
 	public void printEdges(PrintWriter os) {
 		os = new PrintWriter(System.out, true);
-		String edge1;
-		String edge2;
-		ArrayList<String> edges = new ArrayList<String>();
-		
-		for (int i = 0; i < adjMatrix.length; i++) {
-			for (int j = 0; j < adjMatrix.length; j++) {
-				if (adjMatrix[i][j] == 1) {
-					rowIndex = i;
-					edge1 = vertexList[rowIndex];
-					colIndex = j;
-					edge2 = vertexList[colIndex];
-					edges.add(edge1 + " " + edge2);
-				}
-			}
-		}
-			
-		for (int i = 0; i < edges.size(); i++) {
-			os.println(edges.get(i));
-		}
+				
+		for (int i = 0; i < edgeList.length; i++)
+			if (edgeList[i] != null)
+				os.println(edgeList[i]);
 		
 		os.flush();
 	} // end of printEdges()
