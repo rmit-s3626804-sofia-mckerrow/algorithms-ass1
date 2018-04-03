@@ -263,6 +263,7 @@ public class IndMatrix<T extends Object> implements FriendshipGraph<T> {
 
 	public int shortestPathDistance(T vertLabel1, T vertLabel2) {
 		int connectedDist = -1;
+		String vertex;
 
 		// Check if vertex vertLabel1 has already been added
 		vertexFound = checkIfVertexAdded(vertLabel1);
@@ -278,15 +279,14 @@ public class IndMatrix<T extends Object> implements FriendshipGraph<T> {
 		// Check if vertex vertLabel2 has already been added
 		vertexFound = checkIfVertexAdded(vertLabel2);
 
-		if (vertexFound)
-			colIndex = Arrays.asList(vertexList).indexOf(vertLabel2);
-		else
+		if (!vertexFound)
 			System.err.println("Vertex " + vertLabel2 + " has not been added");
 
 		// Check if both vertices vertLabel1 and vertLabel 2 have been added
 		if (Arrays.asList(vertexList).contains(vertLabel1) && Arrays.asList(vertexList).contains(vertLabel2)) {
 			// Search for shortest path using Djikstra's Algorithm
-			// Based on code from https://www.geeksforgeeks.org/greedy-algorithms-set-6-dijkstras-shortest-path-algorithm/
+			// Based on code from
+			// https://www.geeksforgeeks.org/greedy-algorithms-set-6-dijkstras-shortest-path-algorithm/
 			int distances[] = new int[maxVert];
 			// shortestPathTreeSet[i] will be true if vertex i is included in shortest path
 			// tree or shortest distance from vertLabel1 to vertLabel2 is finalised
@@ -311,8 +311,10 @@ public class IndMatrix<T extends Object> implements FriendshipGraph<T> {
 
 				// Update distance value of the adjacent vertices of the picked vertex
 				for (int v = 0; v < maxVert; v++) {
-					// Update distances[v] only if it is not in shortestPathSet, there is an edge from u to v, and
-					// total weight path from vertLabel1 to v through u is smaller than current value of distances[v]
+					// Update distances[v] only if it is not in shortestPathSet, there is an edge
+					// from u to v, and
+					// total weight path from vertLabel1 to v through u is smaller than current
+					// value of distances[v]
 					if (!shortestPathTreeSet[v] && indMatrix[u][v] != 0 && distances[u] != Integer.MAX_VALUE
 							&& distances[u] + indMatrix[u][v] < distances[v]) {
 						distances[v] = distances[u] + indMatrix[u][v];
@@ -320,7 +322,26 @@ public class IndMatrix<T extends Object> implements FriendshipGraph<T> {
 				}
 			}
 
-			connectedDist = distances[colIndex];
+			for (int i = 0; i < edgeList.length; i++) {
+				if (edgeList[i] != null) {
+					// Split the concatenated string in edgeList[i] into two separate strings, one
+					// for each vertex
+					String[] edgeListSplit = edgeList[i].split("\\s");
+					vertex = edgeListSplit[0];
+					// Check if edge with vertex vertLabel2 has been added
+					if (vertex.equals(vertLabel2)) {
+						colIndex = i;
+						break;
+					}
+					else
+						colIndex = -1;
+				}
+			}
+
+			if (colIndex >= 0)
+				connectedDist = distances[colIndex];
+			else
+				connectedDist = -1;
 		}
 
 		// If there is a connection between source and target, return connectedDist
