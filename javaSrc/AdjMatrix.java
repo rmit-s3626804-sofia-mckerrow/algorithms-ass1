@@ -144,6 +144,7 @@ public class AdjMatrix<T extends Object> implements FriendshipGraph<T> {
 			vertexList[rowIndex] = null;
 			numVert--;
 			
+			// remove vertex from adjMatrix
 			for (int i = 0; i < adjMatrix.length; i++) {
 				adjMatrix[rowIndex][i] = 0;
 				adjMatrix[i][rowIndex] = 0;

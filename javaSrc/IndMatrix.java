@@ -67,11 +67,14 @@ public class IndMatrix<T extends Object> implements FriendshipGraph<T> {
 	} // end of addVertex()
 
 	public void addEdge(T srcLabel, T tarLabel) {
+		int rowIndexSrc = 0;
+		int rowIndexTar = 0;
+
 		// check if vertex srcLabel has already been added
 		vertexFound = checkIfVertexAdded(srcLabel);
 
 		if (vertexFound)
-			rowIndex = Arrays.asList(vertexList).indexOf(srcLabel);
+			rowIndexSrc = Arrays.asList(vertexList).indexOf(srcLabel);
 		else
 			System.err.println("Vertex " + srcLabel + " has not been added");
 
@@ -80,8 +83,10 @@ public class IndMatrix<T extends Object> implements FriendshipGraph<T> {
 
 		// check if vertex tarLabel has already been added
 		vertexFound = checkIfVertexAdded(tarLabel);
-		if (!vertexFound)
-			System.err.println("Vertex " + tarLabel + " has not been added");
+		if (vertexFound)
+			rowIndexTar = Arrays.asList(vertexList).indexOf(tarLabel);
+		else
+			System.err.println("Vertex " + srcLabel + " has not been added");
 
 		// check if vertexList contains both srcLabel and tarLabel
 		if (checkIfVertexAdded(srcLabel) && checkIfVertexAdded(tarLabel)) {
@@ -89,19 +94,19 @@ public class IndMatrix<T extends Object> implements FriendshipGraph<T> {
 			edgeFound = checkIfEdgeAdded(srcLabel, tarLabel);
 			if (!edgeFound) {
 				// If edge hasn't already been added then add edge to edgeList
-				for (int i = 0; i < edgeList.length; i = i + 2) {
+				for (int i = 0; i < edgeList.length; i++) {
 					if (edgeList[i] != null)
 						continue;
 					else {
 						edgeList[i] = (String) srcLabel + " " + (String) tarLabel;
-						edgeList[i + 1] = (String) tarLabel + " " + (String) srcLabel;
+						colIndex = i;
 						break;
 					}
 				}
 
 				// Add edge to adjMatrix
-				indMatrix[rowIndex][colIndex] = 1;
-				indMatrix[colIndex][rowIndex] = 1;
+				indMatrix[rowIndexSrc][colIndex] = 1;
+				indMatrix[rowIndexTar][colIndex] = 1;
 			}
 		}
 	} // end of addEdge()
@@ -115,11 +120,68 @@ public class IndMatrix<T extends Object> implements FriendshipGraph<T> {
 	} // end of neighbours()
 
 	public void removeVertex(T vertLabel) {
-		// Implement me!
+		// check if vertLabel has already been added
+		vertexFound = checkIfVertexAdded(vertLabel);
+
+		if (vertexFound) {
+			rowIndex = Arrays.asList(vertexList).indexOf(vertLabel);
+			vertexList[rowIndex] = null;
+			numVert--;
+
+			// remove vertex from indMatrix
+			for (int i = 0; i < indMatrix.length; i++) {
+				indMatrix[rowIndex][i] = 0;
+			}
+		} else
+			System.err.println("Vertex " + vertLabel + " has not been added");
+
+		// check if edge has already been added
+		for (int i = 0; i < edgeList.length; i++) {
+			String test = edgeList[i];
+			if (test != null && test.contains((String) vertLabel)) {
+				// remove edge with vertex vertLabel from edgeList
+				rowIndex = Arrays.asList(edgeList).indexOf(test);
+				edgeList[rowIndex] = null;
+			}
+		}
 	} // end of removeVertex()
 
 	public void removeEdge(T srcLabel, T tarLabel) {
-		// Implement me!
+		int rowIndexSrc = 0;
+		int rowIndexTar = 0;
+
+		// check if vertex srcLabel has already been added
+		vertexFound = checkIfVertexAdded(srcLabel);
+
+		if (vertexFound)
+			rowIndexSrc = Arrays.asList(vertexList).indexOf(srcLabel);
+		else
+			System.err.println("Vertex " + srcLabel + " has not been added");
+
+		// reset vertexFound to false before next check
+		vertexFound = false;
+
+		// check if vertex tarLabel has already been added
+		vertexFound = checkIfVertexAdded(tarLabel);
+		if (vertexFound)
+			rowIndexTar = Arrays.asList(vertexList).indexOf(tarLabel);
+		else
+			System.err.println("Vertex " + srcLabel + " has not been added");
+
+		// check if edge has already been added
+		edgeFound = checkIfEdgeAdded(srcLabel, tarLabel);
+
+		if (edgeFound) {
+			// remove edge from edgeList
+			colIndex = Arrays.asList(edgeList).indexOf((String) srcLabel + " " + (String) tarLabel);
+			edgeList[colIndex] = null;
+
+			// remove edge from adjMatrix
+			indMatrix[rowIndexSrc][colIndex] = 0;
+			indMatrix[rowIndexTar][colIndex] = 0;
+		} else
+			System.err.println("Edge " + srcLabel + " " + tarLabel + " has not been added");
+		
 	} // end of removeEdges()
 
 	public void printVertices(PrintWriter os) {
@@ -141,10 +203,26 @@ public class IndMatrix<T extends Object> implements FriendshipGraph<T> {
 
 	public void printEdges(PrintWriter os) {
 		os = new PrintWriter(System.out, true);
+
+		String edge1;
+		String edge2;
+		ArrayList<String> edges = new ArrayList<String>();
 		
-		for (int i = 0; i < edgeList.length; i++)
-			if (edgeList[i] != null)
-				os.println(edgeList[i]);
+		
+		for (int i = 0; i < edgeList.length; i++) {
+			if (edgeList[i] != null) {
+				String[] edgeListSplit = edgeList[i].split("\\s");
+				edge1 = edgeListSplit[0];
+				edge2 = edgeListSplit[1];
+				edges.add(edge1 + " " + edge2);
+				edges.add(edge2 + " " + edge1);
+			}	
+		}
+
+		for (int i = 0; i < edges.size(); i++) {
+			if (edges.get(i) != null)
+				os.println(edges.get(i));
+		}
 
 		os.flush();
 	} // end of printEdges()
