@@ -128,16 +128,17 @@ public class IndMatrix<T extends Object> implements FriendshipGraph<T> {
 			for (int i = 0; i < indMatrix.length; i++) {
 				if (indMatrix[rowIndex][i] == 1) {
 					if (edgeList[i] != null) {
-						// Split the concatenated string in edgeList[i] into two separate strings, one for each vertex
+						// Split the concatenated string in edgeList[i] into two separate strings, one
+						// for each vertex
 						edgeListSplit = edgeList[i].split("\\s");
 						edge1 = edgeListSplit[0];
 						edge2 = edgeListSplit[1];
-						
+
 						if (!edge1.equals(vertLabel)) {
 							neighbour = (T) edge1;
 							neighbours.add(neighbour);
 						}
-						
+
 						if (!edge2.equals(vertLabel)) {
 							neighbour = (T) edge2;
 							neighbours.add(neighbour);
@@ -242,7 +243,8 @@ public class IndMatrix<T extends Object> implements FriendshipGraph<T> {
 
 		for (int i = 0; i < edgeList.length; i++) {
 			if (edgeList[i] != null) {
-				// Split the concatenated string in edgeList[i] into two separate strings, one for each vertex
+				// Split the concatenated string in edgeList[i] into two separate strings, one
+				// for each vertex
 				String[] edgeListSplit = edgeList[i].split("\\s");
 				edge1 = edgeListSplit[0];
 				edge2 = edgeListSplit[1];
@@ -260,10 +262,73 @@ public class IndMatrix<T extends Object> implements FriendshipGraph<T> {
 	} // end of printEdges()
 
 	public int shortestPathDistance(T vertLabel1, T vertLabel2) {
-		// Implement me!
+		int connectedDist = -1;
 
-		// if we reach this point, source and target are disconnected
-		return disconnectedDist;
+		// Check if vertex vertLabel1 has already been added
+		vertexFound = checkIfVertexAdded(vertLabel1);
+
+		if (vertexFound)
+			rowIndex = Arrays.asList(vertexList).indexOf(vertLabel1);
+		else
+			System.err.println("Vertex " + vertLabel1 + " has not been added");
+
+		// Reset vertexFound to false before next check
+		vertexFound = false;
+
+		// Check if vertex vertLabel2 has already been added
+		vertexFound = checkIfVertexAdded(vertLabel2);
+
+		if (vertexFound)
+			colIndex = Arrays.asList(vertexList).indexOf(vertLabel2);
+		else
+			System.err.println("Vertex " + vertLabel2 + " has not been added");
+
+		// Check if both vertices vertLabel1 and vertLabel 2 have been added
+		if (Arrays.asList(vertexList).contains(vertLabel1) && Arrays.asList(vertexList).contains(vertLabel2)) {
+			// Search for shortest path using Djikstra's Algorithm
+			// Based on code from https://www.geeksforgeeks.org/greedy-algorithms-set-6-dijkstras-shortest-path-algorithm/
+			int distances[] = new int[maxVert];
+			// shortestPathTreeSet[i] will be true if vertex i is included in shortest path
+			// tree or shortest distance from vertLabel1 to vertLabel2 is finalised
+			Boolean shortestPathTreeSet[] = new Boolean[maxVert];
+
+			// Initialise all distances as infinite and shortestPathTreeSet[] as false
+			for (int i = 0; i < maxVert; i++) {
+				distances[i] = Integer.MAX_VALUE;
+				shortestPathTreeSet[i] = false;
+			}
+
+			// Distance of vertLabel1 (source vertex) from itself is always 0
+			distances[rowIndex] = 0;
+
+			// Find shortest path between vertLabel1 and vertLabel2
+			for (int count = 0; count < maxVert - 1; count++) {
+				// Pick the minimum distance vertex from the set of vertices not yet processed
+				int u = minDistance(distances, shortestPathTreeSet);
+
+				// Mark the picked vertex as processed
+				shortestPathTreeSet[u] = true;
+
+				// Update distance value of the adjacent vertices of the picked vertex
+				for (int v = 0; v < maxVert; v++) {
+					// Update distances[v] only if it is not in shortestPathSet, there is an edge from u to v, and
+					// total weight path from vertLabel1 to v through u is smaller than current value of distances[v]
+					if (!shortestPathTreeSet[v] && indMatrix[u][v] != 0 && distances[u] != Integer.MAX_VALUE
+							&& distances[u] + indMatrix[u][v] < distances[v]) {
+						distances[v] = distances[u] + indMatrix[u][v];
+					}
+				}
+			}
+
+			connectedDist = distances[colIndex];
+		}
+
+		// If there is a connection between source and target, return connectedDist
+		if (connectedDist != Integer.MAX_VALUE)
+			return connectedDist;
+		// If we reach this point, source and target are disconnected
+		else
+			return disconnectedDist;
 	} // end of shortestPathDistance()
 
 	// Check if a vertex has been added
