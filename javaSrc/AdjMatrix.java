@@ -13,6 +13,7 @@ public class AdjMatrix<T extends Object> implements FriendshipGraph<T> {
 
 	private int maxVert; // maximum number of vertices
 	private int numVert; // number of vertices
+	private int numEdge; // number of edges
 	private String[] vertexList;
 	private String[] edgeList;
 	private int[][] adjMatrix;
@@ -27,13 +28,15 @@ public class AdjMatrix<T extends Object> implements FriendshipGraph<T> {
 	public AdjMatrix() {
 		maxVert = 4000;
 		numVert = 0;
+		numEdge = 0;
 		vertexList = new String[maxVert];
 		edgeList = new String[maxVert];
 		adjMatrix = new int[maxVert][maxVert];
 		vertexFound = false;
 		edgeFound = false;
 
-		// If the adjMatrix array is too small to add more vertices, copy adjMatrix to a new, larger array
+		// If the adjMatrix array is too small to add more vertices, copy adjMatrix to a
+		// new, larger array
 		if (numVert >= maxVert) {
 			int[][] newAdjMatrix = new int[maxVert * 2][maxVert * 2];
 
@@ -42,52 +45,63 @@ public class AdjMatrix<T extends Object> implements FriendshipGraph<T> {
 					newAdjMatrix[i][j] = adjMatrix[i][j];
 				}
 			}
-			
+
 			adjMatrix = new int[maxVert * 2][maxVert * 2];
-			
+
 			// Copy values from new array back to adjMatrix
 			for (int i = 0; i < newAdjMatrix.length; i++) {
 				for (int j = 0; j < newAdjMatrix[i].length; j++) {
 					adjMatrix[i][j] = newAdjMatrix[i][j];
-				}				
+				}
 			}
 		}
-		
+
 		// Initialise all entries in adjacency matrix to zero
 		for (int i = 0; i < maxVert; i++) {
 			for (int j = 0; j < maxVert; j++) {
 				adjMatrix[i][j] = 0;
 			}
 		}
-
 	} // end of AdjMatrix()
 
 	public void addVertex(T vertLabel) {
+		// Check if vertexList is full
+		if (numVert >= maxVert) {
+			// Copy vertexList to a temporary larger array
+			String[] temp = Arrays.copyOf(vertexList, maxVert * 2);
+			// Copy temporary array back to vertexList
+			vertexList = temp;
+		}
+
 		vertexFound = checkIfVertexAdded(vertLabel);
 
-		// Check if vertexList is full
-		if (numVert < maxVert) {
-			// Check if vertex is already in list
-			for (int i = 0; i < vertexList.length; i++) {
-				// check if vertLabel has already been added
-				if (vertexFound) {
-					System.err.println("Vertex " + vertLabel + " has already been added");
-					break;
-				}
-				// if index i already has a vertex move onto next iteration of for loop
-				else if (vertexList[i] != null)
-					continue;
-				// if index i is empty add vertLabel as vertex
-				else {
-					vertexList[i] = (String) vertLabel;
-					numVert++;
-					break;
-				}
+		for (int i = 0; i < vertexList.length; i++) {
+			// check if vertLabel has already been added
+			if (vertexFound) {
+				System.err.println("Vertex " + vertLabel + " has already been added");
+				break;
+			}
+			// if index i already has a vertex move onto next iteration of for loop
+			else if (vertexList[i] != null)
+				continue;
+			// if index i is empty add vertLabel as vertex
+			else {
+				vertexList[i] = (String) vertLabel;
+				numVert++;
+				break;
 			}
 		}
 	} // end of addVertex()
 
 	public void addEdge(T srcLabel, T tarLabel) {
+		// Check if edgeList is full
+		if (numEdge >= maxVert) {
+			// Copy edgeList to a temporary larger array
+			String[] temp = Arrays.copyOf(edgeList, maxVert * 2);
+			// Copy temporary array back to edgeList
+			edgeList = temp;
+		}
+
 		// check if vertex srcLabel has already been added
 		vertexFound = checkIfVertexAdded(srcLabel);
 
@@ -125,6 +139,7 @@ public class AdjMatrix<T extends Object> implements FriendshipGraph<T> {
 				// Add edge to adjMatrix
 				adjMatrix[rowIndex][colIndex] = 1;
 				adjMatrix[colIndex][rowIndex] = 1;
+				numEdge++;
 			}
 		}
 
@@ -178,6 +193,7 @@ public class AdjMatrix<T extends Object> implements FriendshipGraph<T> {
 				// remove edge with vertex vertLabel from edgeList
 				rowIndex = Arrays.asList(edgeList).indexOf(test);
 				edgeList[rowIndex] = null;
+				numEdge--;
 			}
 		}
 
@@ -214,6 +230,7 @@ public class AdjMatrix<T extends Object> implements FriendshipGraph<T> {
 			colIndex = Arrays.asList(vertexList).indexOf(tarLabel);
 			adjMatrix[rowIndex][colIndex] = 0;
 			adjMatrix[colIndex][rowIndex] = 0;
+			numEdge--;
 		} else
 			System.err.println("Edge " + srcLabel + " " + tarLabel + " has not been added");
 

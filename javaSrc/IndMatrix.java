@@ -13,6 +13,7 @@ public class IndMatrix<T extends Object> implements FriendshipGraph<T> {
 
 	private int maxVert; // maximum number of vertices
 	private int numVert; // number of vertices
+	private int numEdge; // number of edges
 	private String[] vertexList;
 	private String[] edgeList;
 	private int[][] indMatrix;
@@ -27,13 +28,15 @@ public class IndMatrix<T extends Object> implements FriendshipGraph<T> {
 	public IndMatrix() {
 		maxVert = 4000;
 		numVert = 0;
+		numEdge = 0;
 		vertexList = new String[maxVert];
 		edgeList = new String[maxVert];
 		indMatrix = new int[maxVert][maxVert];
 		vertexFound = false;
 		edgeFound = false;
 
-		// If the indMatrix array is too small to add more vertices, copy indMatrix to a new, larger array
+		// If the indMatrix array is too small to add more vertices, copy indMatrix to a
+		// new, larger array
 		if (numVert >= maxVert) {
 			int[][] newIndMatrix = new int[maxVert * 2][maxVert * 2];
 
@@ -62,26 +65,30 @@ public class IndMatrix<T extends Object> implements FriendshipGraph<T> {
 	} // end of IndMatrix()
 
 	public void addVertex(T vertLabel) {
+		// Check if vertexList is full
+		if (numVert >= maxVert) {
+			// Copy vertexList to a temporary larger array
+			String[] temp = Arrays.copyOf(vertexList, maxVert * 2);
+			// Copy temporary array back to vertexList
+			vertexList = temp;
+		}
+
 		vertexFound = checkIfVertexAdded(vertLabel);
 
-		// Check if vertexList is full
-		if (numVert < maxVert) {
-			// Check if vertex is already in list
-			for (int i = 0; i < vertexList.length; i++) {
-				// check if vertLabel has already been added
-				if (vertexFound) {
-					System.err.println("Vertex " + vertLabel + " has already been added");
-					break;
-				}
-				// if index i already has a vertex move onto next iteration of for loop
-				else if (vertexList[i] != null)
-					continue;
-				// if index i is empty add vertLabel as vertex
-				else {
-					vertexList[i] = (String) vertLabel;
-					numVert++;
-					break;
-				}
+		for (int i = 0; i < vertexList.length; i++) {
+			// check if vertLabel has already been added
+			if (vertexFound) {
+				System.err.println("Vertex " + vertLabel + " has already been added");
+				break;
+			}
+			// if index i already has a vertex move onto next iteration of for loop
+			else if (vertexList[i] != null)
+				continue;
+			// if index i is empty add vertLabel as vertex
+			else {
+				vertexList[i] = (String) vertLabel;
+				numVert++;
+				break;
 			}
 		}
 	} // end of addVertex()
@@ -89,6 +96,14 @@ public class IndMatrix<T extends Object> implements FriendshipGraph<T> {
 	public void addEdge(T srcLabel, T tarLabel) {
 		int rowIndexSrc = 0;
 		int rowIndexTar = 0;
+
+		// Check if edgeList is full
+		if (numEdge >= maxVert) {
+			// Copy edgeList to a temporary larger array
+			String[] temp = Arrays.copyOf(edgeList, maxVert * 2);
+			// Copy temporary array back to edgeList
+			edgeList = temp;
+		}
 
 		// check if vertex srcLabel has already been added
 		vertexFound = checkIfVertexAdded(srcLabel);
@@ -127,6 +142,7 @@ public class IndMatrix<T extends Object> implements FriendshipGraph<T> {
 				// Add edge to adjMatrix
 				indMatrix[rowIndexSrc][colIndex] = 1;
 				indMatrix[rowIndexTar][colIndex] = 1;
+				numEdge++;
 			}
 		}
 	} // end of addEdge()
@@ -195,6 +211,7 @@ public class IndMatrix<T extends Object> implements FriendshipGraph<T> {
 				// remove edge with vertex vertLabel from edgeList
 				rowIndex = Arrays.asList(edgeList).indexOf(test);
 				edgeList[rowIndex] = null;
+				numEdge--;
 			}
 		}
 	} // end of removeVertex()
@@ -232,6 +249,7 @@ public class IndMatrix<T extends Object> implements FriendshipGraph<T> {
 			// remove edge from adjMatrix
 			indMatrix[rowIndexSrc][colIndex] = 0;
 			indMatrix[rowIndexTar][colIndex] = 0;
+			numEdge--;
 		} else
 			System.err.println("Edge " + srcLabel + " " + tarLabel + " has not been added");
 
