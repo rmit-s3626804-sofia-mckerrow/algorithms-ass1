@@ -33,6 +33,26 @@ public class IndMatrix<T extends Object> implements FriendshipGraph<T> {
 		vertexFound = false;
 		edgeFound = false;
 
+		// If the indMatrix array is too small to add more vertices, copy indMatrix to a new, larger array
+		if (numVert >= maxVert) {
+			int[][] newIndMatrix = new int[maxVert * 2][maxVert * 2];
+
+			for (int i = 0; i < indMatrix.length; i++) {
+				for (int j = 0; j < indMatrix[i].length; j++) {
+					newIndMatrix[i][j] = indMatrix[i][j];
+				}
+			}
+
+			indMatrix = new int[maxVert * 2][maxVert * 2];
+
+			// Copy values from new array back to adjMatrix
+			for (int i = 0; i < newIndMatrix.length; i++) {
+				for (int j = 0; j < newIndMatrix[i].length; j++) {
+					indMatrix[i][j] = newIndMatrix[i][j];
+				}
+			}
+		}
+
 		// Initialise all entries in incidence matrix to zero
 		for (int i = 0; i < maxVert; i++) {
 			for (int j = 0; j < maxVert; j++) {
@@ -332,8 +352,7 @@ public class IndMatrix<T extends Object> implements FriendshipGraph<T> {
 					if (vertex.equals(vertLabel2)) {
 						colIndex = i;
 						break;
-					}
-					else
+					} else
 						colIndex = -1;
 				}
 			}
