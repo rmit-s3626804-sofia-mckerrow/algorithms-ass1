@@ -26,7 +26,7 @@ public class AdjMatrix<T extends Object> implements FriendshipGraph<T> {
 	 * Contructs empty graph.
 	 */
 	public AdjMatrix() {
-		maxVert = 4000;
+		maxVert = 4038;
 		numVert = 0;
 		numEdge = 0;
 		vertexList = new String[maxVert];
@@ -237,8 +237,6 @@ public class AdjMatrix<T extends Object> implements FriendshipGraph<T> {
 	} // end of removeEdges()
 
 	public void printVertices(PrintWriter os) {
-		os = new PrintWriter(System.out, true);
-
 		// Copy vertexList to a new array then sort the array vertices alphabetically
 		String[] vertices = vertexList.clone();
 		Arrays.sort(vertices, Comparator.nullsLast(Comparator.naturalOrder()));
@@ -254,8 +252,6 @@ public class AdjMatrix<T extends Object> implements FriendshipGraph<T> {
 	} // end of printEdges()
 
 	public void printEdges(PrintWriter os) {
-		os = new PrintWriter(System.out, true);
-
 		for (int i = 0; i < edgeList.length; i++)
 			if (edgeList[i] != null)
 				os.println(edgeList[i]);

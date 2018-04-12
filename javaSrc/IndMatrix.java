@@ -26,7 +26,7 @@ public class IndMatrix<T extends Object> implements FriendshipGraph<T> {
 	 * Contructs empty graph.
 	 */
 	public IndMatrix() {
-		maxVert = 4000;
+		maxVert = 4038;
 		numVert = 0;
 		numEdge = 0;
 		vertexList = new String[maxVert];
@@ -256,8 +256,6 @@ public class IndMatrix<T extends Object> implements FriendshipGraph<T> {
 	} // end of removeEdges()
 
 	public void printVertices(PrintWriter os) {
-		os = new PrintWriter(System.out, true);
-
 		// Copy vertexList to a new array then sort the array vertices alphabetically
 		String[] vertices = vertexList.clone();
 		Arrays.sort(vertices, Comparator.nullsLast(Comparator.naturalOrder()));
@@ -273,8 +271,6 @@ public class IndMatrix<T extends Object> implements FriendshipGraph<T> {
 	} // end of printVertices()
 
 	public void printEdges(PrintWriter os) {
-		os = new PrintWriter(System.out, true);
-
 		String edge1;
 		String edge2;
 		ArrayList<String> edges = new ArrayList<String>();
