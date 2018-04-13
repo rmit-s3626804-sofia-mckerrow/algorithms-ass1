@@ -31,6 +31,7 @@ def high_dense_gen():
 
 def med_dense_gen():
 
+	amount = 64 # Cool it down for this long one
 	# Vert
 	for i in range(amount):
 		print("AV " + str(i))
