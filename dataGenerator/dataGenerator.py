@@ -31,7 +31,6 @@ def high_dense_gen():
 
 def med_dense_gen():
 
-	amount = 64 # Cool it down for this long one
 	# Vert
 	for i in range(amount):
 		print("AV " + str(i))
@@ -90,6 +89,7 @@ def scenario_one_gen():
 def scenario_two_gen():
 
 	get_node_count()
+	amount = 256 # Cool it down for this long one
 	
 	for i in range(amount):
 		# Neighbours
