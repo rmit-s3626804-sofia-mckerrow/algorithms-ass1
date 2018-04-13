@@ -26,7 +26,7 @@ public class IndMatrix<T extends Object> implements FriendshipGraph<T> {
 	 * Contructs empty graph.
 	 */
 	public IndMatrix() {
-		maxVert = 4038;
+		maxVert = 10000;
 		numVert = 0;
 		numEdge = 0;
 		vertexList = new String[maxVert];
@@ -97,53 +97,60 @@ public class IndMatrix<T extends Object> implements FriendshipGraph<T> {
 		int rowIndexSrc = 0;
 		int rowIndexTar = 0;
 
-		// Check if edgeList is full
-		if (numEdge >= maxVert) {
-			// Copy edgeList to a temporary larger array
-			String[] temp = Arrays.copyOf(edgeList, maxVert * 2);
-			// Copy temporary array back to edgeList
-			edgeList = temp;
-		}
-
-		// check if vertex srcLabel has already been added
-		vertexFound = checkIfVertexAdded(srcLabel);
-
-		if (vertexFound)
-			rowIndexSrc = Arrays.asList(vertexList).indexOf(srcLabel);
-		else
-			System.err.println("Vertex " + srcLabel + " has not been added");
-
-		// reset vertexFound to false before next check
-		vertexFound = false;
-
-		// check if vertex tarLabel has already been added
-		vertexFound = checkIfVertexAdded(tarLabel);
-		if (vertexFound)
-			rowIndexTar = Arrays.asList(vertexList).indexOf(tarLabel);
-		else
-			System.err.println("Vertex " + tarLabel + " has not been added");
-
-		// check if vertexList contains both srcLabel and tarLabel
-		if (checkIfVertexAdded(srcLabel) && checkIfVertexAdded(tarLabel)) {
-			// check if edge has been added to edgeList
-			edgeFound = checkIfEdgeAdded(srcLabel, tarLabel);
-			if (!edgeFound) {
-				// If edge hasn't already been added then add edge to edgeList
-				for (int i = 0; i < edgeList.length; i++) {
-					if (edgeList[i] != null)
-						continue;
-					else {
-						edgeList[i] = (String) srcLabel + " " + (String) tarLabel;
-						colIndex = i;
-						break;
-					}
-				}
-
-				// Add edge to adjMatrix
-				indMatrix[rowIndexSrc][colIndex] = 1;
-				indMatrix[rowIndexTar][colIndex] = 1;
-				numEdge++;
+		try {
+			// Check if edgeList is full
+			if (numEdge >= maxVert) {
+				// Copy edgeList to a temporary larger array
+				String[] temp = Arrays.copyOf(edgeList, maxVert * 2);
+				// Copy temporary array back to edgeList
+				edgeList = temp;
 			}
+
+			// check if vertex srcLabel has already been added
+			vertexFound = checkIfVertexAdded(srcLabel);
+
+			if (vertexFound)
+				rowIndexSrc = Arrays.asList(vertexList).indexOf(srcLabel);
+			else
+				System.err.println("Vertex " + srcLabel + " has not been added");
+
+			// reset vertexFound to false before next check
+			vertexFound = false;
+
+			// check if vertex tarLabel has already been added
+			vertexFound = checkIfVertexAdded(tarLabel);
+			if (vertexFound)
+				rowIndexTar = Arrays.asList(vertexList).indexOf(tarLabel);
+			else
+				System.err.println("Vertex " + tarLabel + " has not been added");
+
+			// check if vertexList contains both srcLabel and tarLabel
+			if (checkIfVertexAdded(srcLabel) && checkIfVertexAdded(tarLabel)) {
+				// check if edge has been added to edgeList
+				edgeFound = checkIfEdgeAdded(srcLabel, tarLabel);
+				if (!edgeFound) {
+					// If edge hasn't already been added then add edge to edgeList
+					for (int i = 0; i < edgeList.length; i++) {
+						if (edgeList[i] != null)
+							continue;
+						else {
+							edgeList[i] = (String) srcLabel + " " + (String) tarLabel;
+							colIndex = i;
+							break;
+						}
+					}
+
+					// Add edge to adjMatrix
+					indMatrix[rowIndexSrc][colIndex] = 1;
+					indMatrix[rowIndexTar][colIndex] = 1;
+					numEdge++;
+				}
+			}
+		}
+		catch (Exception e)
+		{
+			System.out.println("\n\n\n\nFailed to add edge  i"+String.valueOf(srcLabel)+" "+String.valueOf(tarLabel)+"\n\n\n\n");
+			System.exit(1);
 		}
 	} // end of addEdge()
 

@@ -26,7 +26,7 @@ public class AdjMatrix<T extends Object> implements FriendshipGraph<T> {
 	 * Contructs empty graph.
 	 */
 	public AdjMatrix() {
-		maxVert = 4038;
+		maxVert = 10000;
 		numVert = 0;
 		numEdge = 0;
 		vertexList = new String[maxVert];

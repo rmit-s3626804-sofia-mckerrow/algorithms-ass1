@@ -93,7 +93,7 @@ public class GraphTesterTimed
 								buf.append(" " + neigh);
 							}
 							
-							neighbourOutWriter.println(tokens[1] + buf.toString());
+							//neighbourOutWriter.println(tokens[1] + buf.toString()); // Don't actually print anything
 						}
 						else {
 							System.err.println(lineNum + ": incorrect number of tokens.");
@@ -121,7 +121,8 @@ public class GraphTesterTimed
 					// compute shortest path distance
 					case "S":
 						if (tokens.length == 3) {
-							distanceOutWriter.println(tokens[1] + " " + tokens[2] + " " + graph.shortestPathDistance(tokens[1], tokens[2]));
+							//distanceOutWriter.println(tokens[1] + " " + tokens[2] + " " + graph.shortestPathDistance(tokens[1], tokens[2]));
+							graph.shortestPathDistance(tokens[1], tokens[2]); // Just run don't print anything...
 						}
 						else {
 							System.err.println(lineNum + ": incorrect number of tokens.");
@@ -214,7 +215,7 @@ public class GraphTesterTimed
 			distanceOutFilename = remainArgs.get(4);
 		}
 		else {
-			System.out.println("Interative mode.");
+			//System.out.println("Interative mode.");
 		}
 
 		
@@ -235,6 +236,7 @@ public class GraphTesterTimed
 				usage(progName);
 		}
 		
+		System.out.println("Running in "+implementationType+" mode.");
 		
 		// if file specified, then load file
 		/*if (inputFilename != null) {
@@ -296,6 +298,7 @@ public class GraphTesterTimed
 				distanceOutWriter = new PrintWriter(new FileWriter(distanceOutFilename), true);
 			}			
                       
+			System.out.println("Loading base data "+inputFilename);
 		      	long startTime = System.currentTimeMillis();	
 			// process the operations
 			processOperations(inReader, graph, verticesOutWriter, edgesOutWriter, neighbourOutWriter, distanceOutWriter);
@@ -308,20 +311,22 @@ public class GraphTesterTimed
 				if (scenarioFilename != null)
 				{
 					inReader = new BufferedReader(new FileReader(scenarioFilename));
+					
+					System.out.println("Loading "+scenarioFilename);
 
 					startTime = System.currentTimeMillis();	
 					// process the operations
 					processOperations(inReader, graph, verticesOutWriter, edgesOutWriter, neighbourOutWriter, distanceOutWriter);
 					stopTime =  System.currentTimeMillis();
 
-					System.out.println("Executed scenario "+inputFilename+" in time: " + String.valueOf(stopTime-startTime));
+					System.out.println("Executed scenario "+scenarioFilename+" in time: " + String.valueOf(stopTime-startTime));
 				}
-
-				
-				
-				System.out.println("Handing control back to CLI");
-				inReader = new BufferedReader(new InputStreamReader(System.in));
-				processOperations(inReader, graph, verticesOutWriter, edgesOutWriter, neighbourOutWriter, distanceOutWriter);
+				else
+				{				
+					System.out.println("Handing control back to CLI");
+					inReader = new BufferedReader(new InputStreamReader(System.in));
+					processOperations(inReader, graph, verticesOutWriter, edgesOutWriter, neighbourOutWriter, distanceOutWriter);
+				}
 			}
 		} catch (IOException e) {
 			System.err.println(e.getMessage());
