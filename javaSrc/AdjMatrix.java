@@ -30,7 +30,7 @@ public class AdjMatrix<T extends Object> implements FriendshipGraph<T> {
 		numVert = 0;
 		numEdge = 0;
 		vertexList = new String[maxVert];
-		edgeList = new String[maxVert];
+		edgeList = new String[maxVert * 10];
 		adjMatrix = new int[maxVert][maxVert];
 		vertexFound = false;
 		edgeFound = false;
@@ -97,9 +97,9 @@ public class AdjMatrix<T extends Object> implements FriendshipGraph<T> {
 		// Check if edgeList is full
 		if (numEdge >= maxVert) {
 			// Copy edgeList to a temporary larger array
-			String[] temp = Arrays.copyOf(edgeList, maxVert * 2);
+			String[] temp = Arrays.copyOf(edgeList, maxVert * 20);
 			// Copy temporary array back to edgeList
-			edgeList = temp;
+			edgeList = Arrays.copyOf(temp, maxVert * 20);
 		}
 
 		// check if vertex srcLabel has already been added
