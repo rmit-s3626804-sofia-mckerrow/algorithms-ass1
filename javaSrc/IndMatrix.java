@@ -258,7 +258,6 @@ public class IndMatrix<T extends Object> implements FriendshipGraph<T> {
 	public void printVertices(PrintWriter os) {
 		// Copy vertexList to a new array then sort the array vertices alphabetically
 		String[] vertices = vertexList.clone();
-		Arrays.sort(vertices, Comparator.nullsLast(Comparator.naturalOrder()));
 
 		for (int i = 0; i < vertices.length; i++) {
 			if (vertices[i] != null) {
