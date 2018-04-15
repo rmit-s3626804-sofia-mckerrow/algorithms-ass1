@@ -10,7 +10,6 @@ import sys
 # 2: 1/2 Edge, 1/2 Vert Medium density
 # 3: 2/3 Edge, 1/3 Vert High density
 
-tCount = 512
 
 
 
@@ -25,18 +24,20 @@ def high_dense_gen():
 		print("AV " + str(i))
 	# Edge
 	for i in range(amount/3 * 2):
-		print("AE " + str(random.randint(0, amount/3)) + " " + str(random.randint(0, amount/3)))
+		print("AE " + str(random.randint(0, amount/3-1)) + " " + str(random.randint(0, amount/3-1)))
 	
 	pass
 
 def med_dense_gen():
+	global amount
+	amount = int(math.floor(amount/3 * 1.5))
 
 	# Vert
 	for i in range(amount):
 		print("AV " + str(i))
 	# Edge
 	for i in range(amount):
-		print("AE " + str(random.randint(0, amount)) + " " + str(random.randint(0, amount)))
+		print("AE " + str(random.randint(0, amount-1)) + " " + str(random.randint(0, amount-1)))
 	pass
 
 def low_dense_gen():
@@ -45,7 +46,7 @@ def low_dense_gen():
 		print("AV " + str(i))
 	# Edge
 	for i in range(amount/3 * 1):
-		print("AE " + str(random.randint(0, amount/3 * 2)) + " " + str(random.randint(0, amount/3 * 2)))
+		print("AE " + str(random.randint(0, amount/3 * 2-1)) + " " + str(random.randint(0, amount/3 * 2-1)))
 	pass
 
 
@@ -58,10 +59,10 @@ random.seed();
 
 def get_node_count():
 	global node_count
-	if len(sys.argv) is not 3:
+	if len(sys.argv) is not 6 and len(sys.argv) is not 3:
 		print("Please specify a node count on the cli...")
 		exit()
-	node_count = int(sys.argv[2])
+	node_count = int(sys.argv[2])-1
 
 	pass
 
@@ -100,6 +101,7 @@ def scenario_two_gen():
 	pass
 
 
+
 # Testing edge removal
 # Testing vertex removal
 def scenario_three_gen():
@@ -107,15 +109,33 @@ def scenario_three_gen():
 	get_node_count()
 
 
-	# Remove edges first in case we remove vertex then try remove an edge of it later
+	if len(sys.argv) is not 6:
+		print("Please specify a data script, edge start point and count on the cli...")
+		exit()
+	script = sys.argv[3]
+	start = int(sys.argv[4])
+	count = int(sys.argv[5])
+
+	data = ""
+	with open(script) as scriptf:
+		data = scriptf.readlines()[start:start+count]
+
+	random.shuffle(data)
+
+	# Remove all of the edges first in case we remove vertex then try remove an edge of it later
 
 	# Edge
-	for i in range(amount):
-		print("RE " + str(random.randint(0, node_count-1)) + " " + str(random.randint(0, node_count-1)))
+	for i in data:
+		print("R" + ''.join(list(i)[1:-1]))
+	
 	# Vert
-	for i in range(amount):
-		print("RV " + str(node_count+i))
+	rlist = []
+	for i in range(node_count):
+		rlist.append("RV " + str(node_count-i))
 
+	random.shuffle(rlist)
+	for i in rlist:
+		print(i)
 
 
 # Basic CLI input...
