@@ -38,7 +38,7 @@ public class IndMatrix<T extends Object> implements FriendshipGraph<T> {
 		// If the indMatrix array is too small to add more vertices, copy indMatrix to a
 		// new, larger array
 		if (numVert >= maxVert) {
-			int[][] newIndMatrix = new int[maxVert * 2][maxVert * 2];
+			int[][] newIndMatrix = new int[maxVert * 2][maxVert * 20];
 
 			for (int i = 0; i < indMatrix.length; i++) {
 				for (int j = 0; j < indMatrix[i].length; j++) {
@@ -119,6 +119,7 @@ public class IndMatrix<T extends Object> implements FriendshipGraph<T> {
 
 			// check if vertex tarLabel has already been added
 			vertexFound = checkIfVertexAdded(tarLabel);
+			
 			if (vertexFound)
 				rowIndexTar = Arrays.asList(vertexList).indexOf(tarLabel);
 			else
@@ -240,6 +241,7 @@ public class IndMatrix<T extends Object> implements FriendshipGraph<T> {
 
 		// check if vertex tarLabel has already been added
 		vertexFound = checkIfVertexAdded(tarLabel);
+		
 		if (vertexFound)
 			rowIndexTar = Arrays.asList(vertexList).indexOf(tarLabel);
 		else
